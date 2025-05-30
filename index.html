@@ -11,72 +11,29 @@
   <style>
     body {
       font-family: 'Cairo', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9ebeb;
     }
     /* إزالة قيود الحجم للصور في الأقسام السابقة */
     .product-item img, .offer-item img {
       width: 100%;
-      height: auto; /* الحفاظ على نسب الصور الأصلية */
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .svg-frame {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      transform-style: preserve-3d;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .svg-frame svg {
-      position: absolute;
-      transition: .5s;
-      z-index: calc(1 - (0.2 * var(--j)));
-      transform-origin: center;
-      width: 344px;
-      height: 344px;
-      fill: none;
-    }
-    .svg-frame:hover svg {
-      transform: rotate(-80deg) skew(30deg) translateX(calc(45px * var(--i))) translateY(calc(-35px * var(--i)));
-    }
-    .svg-frame svg #center {
-      transition: .5s;
-      transform-origin: center;
-    }
-    .svg-frame:hover svg #center {
-      transform: rotate(-30deg) translateX(45px) translateY(-3px);
-    }
-    #out2 {
-      animation: rotate16 7s ease-in-out infinite alternate;
-      transform-origin: center;
-    }
-    #out3 {
-      animation: rotate16 3s ease-in-out infinite alternate;
-      transform-origin: center;
-      stroke: #ff0;
-    }
-    #inner3,
-    #inner1 {
-      animation: rotate16 4s ease-in-out infinite alternate;
-      transform-origin: center;
-    }
-    #center1 {
-      fill: #ff0;
-      animation: rotate16 2s ease-in-out infinite alternate;
-      transform-origin: center;
-    }
-    @keyframes rotate16 {
-      to {
-        transform: rotate(360deg);
-      }
+      display: none;
     }
     /* تحسينات UI/UX لواجهة تسجيل الدخول */
     #login {
-      background-color: #1E3A8A; /* أزرق داكن */
+      background-color: #1E3A8A;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
       border-radius: 20px;
       padding: 2rem;
       max-width: 400px;
       margin: 2rem auto;
+      position: relative;
     }
     #login h2 {
       color: #ffffff;
@@ -103,7 +60,7 @@
       box-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
     }
     #login button {
-      background: linear-gradient(to right, #3b82f6, #60a5fa); /* تدرج لوني */
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
       color: #ffffff;
       border: none;
       border-radius: 10px;
@@ -129,46 +86,63 @@
     #login-message {
       color: #ffffff;
       font-weight: bold;
+      text-align: center;
     }
-    /* أنماط المعرض (Carousel) */
-    .carousel-container {
-      position: relative;
-      max-width: 100%;
-      margin: 2rem auto;
-      overflow: hidden;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* تأثير تحميل جديد */
+    .loader {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
     }
-    .carousel {
-      display: flex;
-      width: 600%; /* 6 أضعاف لأن لدينا 11 صورة ونكررها للحركة اللانهائية */
-      animation: slide 11s infinite linear; /* 1 ثانية لكل صورة (11 صورة × 1 ثانية = 11 ثانية) */
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
-    .carousel img {
+    /* الهيدر مع تعديل موقع الاسم */
+    header {
+      background-color: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 1rem 2rem;
+      position: fixed;
       width: 100%;
-      height: auto; /* الحفاظ على نسب الصور */
-      flex: 0 0 16.66%; /* عرض الصورة (100% ÷ 6 = 16.66%) لعرض صورتين معًا */
+      top: 0;
+      z-index: 1000;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      justify-content: center; /* لتوسيط الاسم */
+      align-items: center;
     }
-    /* للشاشات الصغيرة، تظهر صورة واحدة فقط */
-    @media (max-width: 768px) {
-      .carousel {
-        width: 1200%; /* 12 أضعاف لأن لدينا 11 صورة ونكررها */
-      }
-      .carousel img {
-        flex: 0 0 8.33%; /* عرض الصورة (100% ÷ 12 = 8.33%) لعرض صورة واحدة */
-      }
+    header.scrolled {
+      transform: translateY(-50px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
-    /* حركة انسيابية تلقائية */
-    @keyframes slide {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); } /* 50% لأن النصف الأول من الصور يكرر النصف الثاني */
+    header .logo {
+      animation: bounce 2s infinite;
+      margin-right: 1rem; /* إضافة مسافة بين الشعار والاسم */
+    }
+    header h1 {
+      margin: 0; /* إزالة الهوامش الافتراضية */
+      font-size: 1.5rem; /* تقليل الحجم قليلاً لتجنب التداخل */
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
     }
   </style>
   <script>
     // وظيفة تسجيل الدخول
     async function signIn(event) {
       event.preventDefault();
-      const loading = document.getElementById('loading');
+      const loading = document.querySelector('.loader');
       const messageDiv = document.getElementById('login-message');
       const loginSection = document.getElementById('login');
       const content = document.getElementById('content');
@@ -176,23 +150,18 @@
       loading.style.display = 'block';
       messageDiv.textContent = '';
 
-      // محاكاة إرسال رسالة واتساب تلقائيًا
       const notificationMessage = encodeURIComponent('تسجيل عميل جديد');
       try {
         console.log('Sending WhatsApp message:', notificationMessage);
-        // في الواقع، هنا يجب استخدام خادم لإرسال الرسالة
-        // مثال: fetch('https://your-server/send-whatsapp', { method: 'POST', body: JSON.stringify({ message: notificationMessage, to: '249960219135' }) });
       } catch (error) {
         console.error('Error sending WhatsApp message:', error);
       }
 
-      // تأخير لمحاكاة الانتظار
       setTimeout(() => {
         loading.style.display = 'none';
         messageDiv.textContent = 'تم التسجيل بنجاح!';
         messageDiv.classList.add('text-green-500');
 
-        // إخفاء واجهة تسجيل الدخول وإظهار المحتوى
         setTimeout(() => {
           loginSection.classList.add('hidden');
           content.classList.remove('hidden');
@@ -203,20 +172,30 @@
     // وظيفة شراء توجه إلى واتساب
     function buyNow(product, price) {
       let message = encodeURIComponent(`أريد طلب ${product} بسعر ${price}`);
-      let loading = document.getElementById('loading');
+      let loading = document.querySelector('.loader');
       loading.style.display = 'block';
       setTimeout(() => {
-        window.open(`https://wa.me/249922676230?text=${message}`, '_blank');
+        window.open(`https://wa.me/249960219135?text=${message}`, '_blank');
         loading.style.display = 'none';
       }, 2000);
     }
+
+    // تأثير تمرير الهيدر
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
   </script>
 </head>
 <body class="bg-pink-50">
   <!-- واجهة تسجيل الدخول (تظهر أولاً) -->
   <section id="login" class="p-4 mt-6 text-white rounded-lg shadow-md mx-4">
     <h2 class="text-xl font-bold mb-4">تسجيل الدخول</h2>
-    <p class="mb-4">أهلاً بك مجدداً</p>
+    <p class="mb-4">تسجيلك يؤكد ذوقك فأنت في ضيافة البروف</p>
     <form onsubmit="signIn(event)">
       <input type="text" id="username" placeholder="اسم المستخدم" class="w-full p-2 mb-2 border rounded text-black" aria-label="إدخال اسم المستخدم" required />
       <input type="password" id="password" placeholder="كلمة المرور" class="w-full p-2 mb-2 border rounded text-black" aria-label="إدخال كلمة المرور" required />
@@ -227,15 +206,7 @@
       </div>
       <a href="#" class="block text-center" aria-label="إنشاء حساب جديد">ليس لديك حساب؟ أنشئ حساباً</a>
     </form>
-    <div id="loading" class="svg-frame hidden" style="margin: 0 auto;">
-      <svg viewBox="0 0 344 344" style="--i: 1; --j: 1;">
-        <circle id="out2" cx="172" cy="172" r="150" stroke="#fff" stroke-width="2" />
-        <circle id="out3" cx="172" cy="172" r="130" stroke="#fff" stroke-width="2" />
-        <circle id="inner3" cx="172" cy="172" r="110" stroke="#fff" stroke-width="2" />
-        <circle id="inner1" cx="172" cy="172" r="90" stroke="#fff" stroke-width="2" />
-        <circle id="center1" cx="172" cy="172" r="70" />
-      </svg>
-    </div>
+    <div class="loader" id="loading"></div>
     <p id="login-message" class="text-center mt-2"></p>
   </section>
 
@@ -244,7 +215,7 @@
     <!-- رأس الصفحة -->
     <header class="bg-white shadow p-4 flex justify-between items-center">
       <div class="flex items-center space-x-4 rtl:space-x-reverse">
-        <img src="https://cdn-icons-png.flaticon.com/512/1037/1037855.png" alt="شعار حلويات البروف" class="w-10 h-10" loading="lazy" />
+        <img src="https://cdn-icons-png.flaticon.com/512/1037/1037855.png" alt="شعار حلويات البروف" class="w-10 h-10 logo" loading="lazy" />
         <h1 class="text-2xl font-bold text-pink-600">حلويات البروف</h1>
       </div>
     </header>
@@ -254,41 +225,49 @@
       <div class="product-item">
         <img src="https://i.imgur.com/yMIGV3j.jpeg" alt="بسبوسة صوبع طازجة من حلويات البروف" class="rounded-lg shadow w-full" loading="lazy" />
         <p class="mt-1 font-bold text-sm">باسطة صوبع</p>
+        <p class="text-xs text-gray-500">ذوق عربي أصيل بقوام ناعم!</p>
         <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('بسبوسة صوبع', 6000)" aria-label="شراء بسبوسة صوبع">شراء</button>
       </div>
       <div class="product-item">
         <img src="https://i.imgur.com/Wddpki1.jpeg" alt="كنافة بالفستق من حلويات البروف" class="rounded-lg shadow w-full" loading="lazy" />
         <p class="mt-1 font-bold text-sm">كنافة بالفستق</p>
+        <p class="text-xs text-gray-500">نكهة فستق لا تُقاوم!</p>
         <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('كنافة بالفستق', 6000)" aria-label="شراء كنافة بالفستق">شراء</button>
       </div>
       <div class="product-item">
         <img src="https://i.imgur.com/D364K3O.jpeg" alt="كعب الغزال من حلويات البروف" class="rounded-lg shadow w-full" loading="lazy" />
         <p class="mt-1 font-bold text-sm">كعب الغزال</p>
+        <p class="text-xs text-gray-500">حلوى تقليدية بمذاق رائع!</p>
         <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('كعب الغزال', 6000)" aria-label="شراء كعب الغزال">شراء</button>
       </div>
       <div class="product-item">
         <img src="https://i.imgur.com/OObM9wA.jpeg" alt="أشكال حلويات متنوعة من حلويات البروف" class="rounded-lg shadow w-full" loading="lazy" />
         <p class="mt-1 font-bold text-sm">أشكال</p>
+        <p class="text-xs text-gray-500">تنوع مميز لكل الأذواق!</p>
         <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('أشكال', 10000)" aria-label="شراء أشكال">شراء</button>
       </div>
       <div class="product-item">
         <img src="https://i.imgur.com/UNJDWs6.jpeg" alt="حلويات ناعمة من حلويات البروف" class="rounded-lg shadow w-full" loading="lazy" />
         <p class="mt-1 font-bold text-sm">ناعم</p>
+        <p class="text-xs text-gray-500">قوام ناعم يذوب في الفم!</p>
         <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('ناعم', 10000)" aria-label="شراء ناعم">شراء</button>
       </div>
       <div class="product-item">
         <img src="https://i.imgur.com/zyFMq5d.jpeg" alt="جاتو من حلويات البروف" class="rounded-lg shadow w-full" loading="lazy" />
         <p class="mt-1 font-bold text-sm">جاتو</p>
+        <p class="text-xs text-gray-500">مثالي للاحتفالات!</p>
         <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('جاتو', 40000)" aria-label="شراء جاتو">شراء</button>
       </div>
       <div class="product-item">
         <img src="https://i.imgur.com/G2bGKJ6.jpeg" alt="كنافة بالشوكولاتة من حلويات البروف" class="rounded-lg shadow w-full" loading="lazy" />
         <p class="mt-1 font-bold text-sm">كنافة بالشوكولاتة</p>
+        <p class="text-xs text-gray-500">تجربة شوكولاتة فريدة!</p>
         <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('كنافة بالشوكولاتة', 6000)" aria-label="شراء كنافة بالشوكولاتة">شراء</button>
       </div>
       <div class="product-item">
         <img src="https://i.imgur.com/vPmFVWf.jpeg" alt="يانسون من حلويات البروف" class="rounded-lg shadow w-full" loading="lazy" />
         <p class="mt-1 font-bold text-sm">يانسون</p>
+        <p class="text-xs text-gray-500">نكهة دافئة ومميزة!</p>
         <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('يانسون', 8000)" aria-label="شراء يانسون">شراء</button>
       </div>
     </section>
@@ -320,39 +299,6 @@
             <p class="text-sm text-gray-500">خصم 10% حتى نهاية الأسبوع</p>
             <button class="bg-pink-500 text-white px-2 py-1 rounded-md mt-2" onclick="buyNow('مخبوزات صباحية', 9000)" aria-label="شراء مخبوزات صباحية">اطلب الآن</button>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- قسم معرض الصور (Carousel) -->
-    <section class="p-4">
-      <h2 class="text-xl font-bold text-pink-600 mb-4">معرض الصور</h2>
-      <div class="carousel-container">
-        <div class="carousel" id="carousel">
-          <!-- الصور الأصلية -->
-          <img src="https://i.imgur.com/5jEsTvd.jpeg" alt="صورة حلويات 1" loading="lazy" />
-          <img src="https://i.imgur.com/F0bTmgW.jpeg" alt="صورة حلويات 2" loading="lazy" />
-          <img src="https://i.imgur.com/ySHKFBA.jpeg" alt="صورة حلويات 3" loading="lazy" />
-          <img src="https://i.imgur.com/1bDDhdM.jpeg" alt="صورة حلويات 4" loading="lazy" />
-          <img src="https://i.imgur.com/v93Xhtn.jpeg" alt="صورة حلويات 5" loading="lazy" />
-          <img src="https://i.imgur.com/ILprQpF.jpeg" alt="صورة حلويات 6" loading="lazy" />
-          <img src="https://i.imgur.com/IomsQGb.jpeg" alt="صورة حلويات 7" loading="lazy" />
-          <img src="https://i.imgur.com/6jxQ6cv.jpeg" alt="صورة حلويات 8" loading="lazy" />
-          <img src="https://i.imgur.com/3m2YX79.jpeg" alt="صورة حلويات 9" loading="lazy" />
-          <img src="https://i.imgur.com/wJSsEQn.jpeg" alt="صورة حلويات 10" loading="lazy" />
-          <img src="https://i.imgur.com/Qs2NM6F.jpeg" alt="صورة حلويات 11" loading="lazy" />
-          <!-- تكرار الصور للحركة اللانهائية -->
-          <img src="https://i.imgur.com/5jEsTvd.jpeg" alt="صورة حلويات 1" loading="lazy" />
-          <img src="https://i.imgur.com/F0bTmgW.jpeg" alt="صورة حلويات 2" loading="lazy" />
-          <img src="https://i.imgur.com/ySHKFBA.jpeg" alt="صورة حلويات 3" loading="lazy" />
-          <img src="https://i.imgur.com/1bDDhdM.jpeg" alt="صورة حلويات 4" loading="lazy" />
-          <img src="https://i.imgur.com/v93Xhtn.jpeg" alt="صورة حلويات 5" loading="lazy" />
-          <img src="https://i.imgur.com/ILprQpF.jpeg" alt="صورة حلويات 6" loading="lazy" />
-          <img src="https://i.imgur.com/IomsQGb.jpeg" alt="صورة حلويات 7" loading="lazy" />
-          <img src="https://i.imgur.com/6jxQ6cv.jpeg" alt="صورة حلويات 8" loading="lazy" />
-          <img src="https://i.imgur.com/3m2YX79.jpeg" alt="صورة حلويات 9" loading="lazy" />
-          <img src="https://i.imgur.com/wJSsEQn.jpeg" alt="صورة حلويات 10" loading="lazy" />
-          <img src="https://i.imgur.com/Qs2NM6F.jpeg" alt="صورة حلويات 11" loading="lazy" />
         </div>
       </div>
     </section>
@@ -436,7 +382,7 @@
     </section>
 
     <!-- تذييل الصفحة -->
-    <footer class="text-center text-sm text-gray-600 py-4 mt-8">
+    <footer class="text-center text-sm text-gray-600 py-4 mt-8 bg-white shadow-md">
       جميع الحقوق محفوظة © 2025 حاتم الأنصاري |
       <a href="/privacy" class="text-pink-600" aria-label="سياسة الخصوصية">سياسة الخصوصية</a> |
       <a href="/terms" class="text-pink-600" aria-label="شروط الاستخدام">شروط الاستخدام</a>
@@ -449,4 +395,4 @@
     </nav>
   </div>
 </body>
-  </html>
+        </html>
